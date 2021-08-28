@@ -38,6 +38,18 @@ class User:
             return True
 
     @staticmethod
+    def load_user_by_name(cursor, name):
+        sql = "SELECT id, username, hashed_password FROM users WHERE username LIKE %s"
+        cursor.execute(sql, (name,))  # (name, ) - cause we need a tuple
+        data = cursor.fetchone()
+        if data:
+            id_, username, hashed_password = data
+            loaded_user = User(username)
+            loaded_user._id = name
+            loaded_user._hashed_password = hashed_password
+            return loaded_user
+
+    @staticmethod
     def load_user_by_id(cursor, id_):
         sql = "SELECT id, username, hashed_password FROM users WHERE id=%s"
         cursor.execute(sql, (id_,))  # (id_, ) - cause we need a tuple
@@ -68,3 +80,9 @@ class User:
         cursor.execute(sql, (self.id,))
         self._id = -1
         return True
+
+
+
+
+
+

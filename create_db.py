@@ -20,7 +20,7 @@ def create_db(db_name):
 
     sql_crate_tables = [f"""CREATE TABLE users (
                         id serial,
-                        user_name varchar(255),
+                        username varchar(255),
                         hashed_password varchar(80),
                         PRIMARY KEY(id)
                     );""",
