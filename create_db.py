@@ -13,24 +13,24 @@ def create_db(db_name):
     :param str db_name: name of database,
 
     :rtype:
-    :return: data from psycobg2 cursor as a list (can be None) if nothing to fetch.
+    :return:
     """
 
     sql_crate_db = f"CREATE DATABASE {db_name};"
 
     sql_crate_tables = [f"""CREATE TABLE users (
                         id serial,
-                        username varchar(255),
+                        username varchar(255) UNIQUE,
                         hashed_password varchar(80),
                         PRIMARY KEY(id)
                     );""",
 
                     f"""CREATE TABLE messages (
                         id serial,
-                        cration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        from_id int REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+                        to_id int REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+                        creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         text varchar(255),
-                        from_id int REFERENCES users(id) ON DELETE CASCADE,
-                        to_id int REFERENCES users(id) ON DELETE CASCADE,
                         PRIMARY KEY(id)
                         );"""
                     ]
@@ -65,3 +65,5 @@ def create_db(db_name):
 
 if __name__ == '__main__':
     create_db('test')
+
+
