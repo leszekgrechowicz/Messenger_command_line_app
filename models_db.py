@@ -9,8 +9,6 @@ class User:
         self.username = username
         self._hashed_password = hash_password(password, salt)
 
-
-
     @property
     def id(self):
         return self._id
@@ -27,6 +25,7 @@ class User:
         self.set_password(password)
 
     def save_to_db(self, cursor):
+
         if self._id == -1:
             sql = """INSERT INTO users(username, hashed_password)
                             VALUES(%s, %s) RETURNING id"""
@@ -43,6 +42,7 @@ class User:
 
     @staticmethod
     def load_user_by_name(cursor, name):
+
         sql = "SELECT id, username, hashed_password FROM users WHERE username LIKE %s"
         cursor.execute(sql, (name,))  # (name, ) - cause we need a tuple
         data = cursor.fetchone()
@@ -55,8 +55,9 @@ class User:
 
     @staticmethod
     def load_user_by_id(cursor, id_):
-        sql = "SELECT id, username, hashed_password FROM users WHERE id=%s"
-        cursor.execute(sql, (id_,))  # (id_, ) - cause we need a tuple
+
+        sql = f"SELECT id, username, hashed_password FROM users WHERE id={id_}"
+        cursor.execute(sql)
         data = cursor.fetchone()
         if data:
             id_, username, hashed_password = data
@@ -68,6 +69,7 @@ class User:
 
     @staticmethod
     def load_all_users(cursor):
+
         sql = "SELECT id, username, hashed_password FROM Users"
         users = []
         cursor.execute(sql)
@@ -81,6 +83,7 @@ class User:
         return users
 
     def delete(self, cursor):
+        """Deletes User by id"""
         sql = "DELETE FROM Users WHERE id=%s"
         cursor.execute(sql, (self.id,))
         self._id = -1
@@ -89,7 +92,7 @@ class User:
 
 class Message:
 
-    def __init__(self, sender_id, receiver_id, message_='', creation_date=None):
+    def __init__(self, sender_id=None, receiver_id=None, message_='', creation_date=None):
 
         self._id = -1
         self.from_id = sender_id
@@ -102,6 +105,8 @@ class Message:
         return self._id
 
     def save_to_db(self, cursor):
+        """Saves changes to the DataBase"""
+
         if self._id == -1:
             sql = """INSERT INTO messages (from_id, to_id, text)
                             VALUES(%s, %s, %s) RETURNING id"""
@@ -116,8 +121,11 @@ class Message:
             return True
 
     @staticmethod
-    def load_all_messages(cursor):
-        sql = "SELECT id, from_id, to_id, text, creation_date FROM messages;"
+    def load_all_messages(cursor, user_id):
+        """Draws all messages from the DataBase"""
+
+        sql = f"SELECT id, from_id, to_id, creation_date, text FROM messages WHERE from_id={user_id};"
+
         messages = []
         cursor.execute(sql)
         for row in cursor.fetchall():
@@ -127,44 +135,3 @@ class Message:
 
             messages.append(loaded_user)
         return messages
-
-
-
-if __name__ == '__main__':
-    # db = 'messenger'
-    # USER = "postgres"
-    # HOST = "localhost"
-    # PASSWORD = "password"
-    #
-    # # create_db(db)
-    #
-    # # try:
-    # cnx = connect(user=USER, password=PASSWORD, host=HOST, database=db)
-    # cnx.autocommit = True
-    # cursor = cnx.cursor()
-    #
-    # # --------------------------------------------------------------
-    #
-    # id_ = 2
-    #
-    # sql = f"SELECT id, username, hashed_password FROM users WHERE id={id_}"
-    # cursor.execute(sql)  # (id_, ) - cause we need a tuple
-    # data = cursor.fetchone()
-    # print(data)
-    # if data:
-    #     id_, username, hashed_password = data
-    #     loaded_user = User(username)
-    #     loaded_user._id = id_
-    #     loaded_user._hashed_password = hashed_password
-    #
-    #
-    # # ---------------------------------------------------------------
-    #
-    # # except:
-    # #    print("There is error in execute_sql")
-    # # else:
-    # cursor.close()
-    # cnx.close()
-
-
-
