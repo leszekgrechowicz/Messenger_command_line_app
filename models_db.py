@@ -1,5 +1,6 @@
 from crypt_pass import hash_password
 from create_db import create_db
+from psycopg2 import connect
 
 
 class User:
@@ -8,8 +9,7 @@ class User:
         self.username = username
         self._hashed_password = hash_password(password, salt)
 
-    def __repr__(self):
-        return
+
 
     @property
     def id(self):
@@ -49,7 +49,7 @@ class User:
         if data:
             id_, username, hashed_password = data
             loaded_user = User(username)
-            loaded_user._id = name
+            loaded_user._id = id_
             loaded_user._hashed_password = hashed_password
             return loaded_user
 
@@ -130,7 +130,41 @@ class Message:
 
 
 
-
+if __name__ == '__main__':
+    # db = 'messenger'
+    # USER = "postgres"
+    # HOST = "localhost"
+    # PASSWORD = "password"
+    #
+    # # create_db(db)
+    #
+    # # try:
+    # cnx = connect(user=USER, password=PASSWORD, host=HOST, database=db)
+    # cnx.autocommit = True
+    # cursor = cnx.cursor()
+    #
+    # # --------------------------------------------------------------
+    #
+    # id_ = 2
+    #
+    # sql = f"SELECT id, username, hashed_password FROM users WHERE id={id_}"
+    # cursor.execute(sql)  # (id_, ) - cause we need a tuple
+    # data = cursor.fetchone()
+    # print(data)
+    # if data:
+    #     id_, username, hashed_password = data
+    #     loaded_user = User(username)
+    #     loaded_user._id = id_
+    #     loaded_user._hashed_password = hashed_password
+    #
+    #
+    # # ---------------------------------------------------------------
+    #
+    # # except:
+    # #    print("There is error in execute_sql")
+    # # else:
+    # cursor.close()
+    # cnx.close()
 
 
 
