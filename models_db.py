@@ -122,7 +122,7 @@ class Message:
     def load_all_messages(cursor, user_id):
         """Draws all messages from the DataBase"""
 
-        sql = f"SELECT id, from_id, to_id, creation_date, text FROM messages WHERE to_id={user_id};"
+        sql = f"SELECT id, from_id, to_id, creation_date, text FROM messages WHERE to_id={user_id} OR from_id={user_id};"
 
         messages = []
         cursor.execute(sql)

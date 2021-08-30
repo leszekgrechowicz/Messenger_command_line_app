@@ -46,11 +46,11 @@ def get_args():
 
     parser.add_argument('-l',
                         '--list',
-                        help='List unread users messages',
+                        help='List all received and sent users messages',
                         action='store_true')
 
-    parser.add_argument('-l',
-                        '--list',
+    parser.add_argument('-n',
+                        '--new',
                         help='List unread users messages',
                         action='store_true')
 
@@ -72,7 +72,7 @@ def check_user(user, name, password):
         return True
 
 
-def list_messages(cursor, name, password):
+def list_all_messages(cursor, name, password):
     """List all messages send by logged user"""
 
     user = User.load_user_by_name(cursor, name)
@@ -82,12 +82,31 @@ def list_messages(cursor, name, password):
         messages = Message().load_all_messages(cursor, user.id)
 
         if not messages:
-            print("\nNo new messages!")
+            print("\nNo messages yet!")
         else:
             for message in messages:
-                from_user = User().load_user_by_id(cursor, message.from_id)
-                print(f"\nFrom: {from_user.username}\tOn: {str(message.creation_date)[:19]}"
-                      f"\tMessage: {message.text}")
+
+                if message.to_id == user.id:
+
+                    from_user = User().load_user_by_id(cursor, message.from_id)
+
+                    print(f"\nReceived From: {from_user.username}\tOn: {str(message.creation_date)[:19]}"
+                          f"\tMessage: {message.text}")
+
+                elif message.from_id == user.id:
+
+                    to_user = User().load_user_by_id(cursor, message.to_id)
+                    print(f"\nYou sent to: {to_user.username}\tOn: {str(message.creation_date)[:19]}"
+                          f"\tMessage: {message.text}")
+
+
+def list_new_messages(cursor, name, password):
+
+    user = User.load_user_by_name(cursor, name)
+    user_ok = check_user(user, name, password)
+
+    if user_ok:
+        pass
 
 
 def send_message(cursor, name, password, to_user, message):
@@ -130,11 +149,11 @@ def main():
         parser_, args = get_args()
 
         if args.username and args.password and args.list and not args.to \
-                and not args.send:
-            list_messages(cursor, args.username, args.password)
+                and not args.send and not args.new:
+            list_all_messages(cursor, args.username, args.password)
 
         elif args.username and args.password and not args.list and args.to \
-                and args.send:
+                and args.send and not args.new:
             send_message(cursor, args.username, args.password, args.to, args.send)
 
         else:
