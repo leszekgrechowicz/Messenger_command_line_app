@@ -30,6 +30,7 @@ def create_db(db_name):
                         from_id int REFERENCES users(id) ON DELETE CASCADE NOT NULL,
                         to_id int REFERENCES users(id) ON DELETE CASCADE NOT NULL,
                         creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        is_read BOOLEAN default FALSE,
                         text varchar(255),
                         PRIMARY KEY(id)
                         );"""
@@ -64,6 +65,6 @@ def create_db(db_name):
 
 
 if __name__ == '__main__':
-    create_db('test')
+    create_db('messenger')
 
 
