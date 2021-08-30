@@ -148,4 +148,7 @@ class Message:
             loaded_user._id = id_
 
             messages.append(loaded_user)
+
+        sql_make_messages_read = f"UPDATE messages SET is_read=TRUE WHERE to_id={user_id}"
+        cursor.execute(sql_make_messages_read)
         return messages

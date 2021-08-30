@@ -51,7 +51,7 @@ def get_args():
 
     parser.add_argument('-n',
                         '--new',
-                        help='List unread users messages',
+                        help='List unread user messages',
                         action='store_true')
 
     return parser, parser.parse_args()
@@ -101,12 +101,21 @@ def list_all_messages(cursor, name, password):
 
 
 def list_new_messages(cursor, name, password):
+    """List only unread messages"""
 
     user = User.load_user_by_name(cursor, name)
     user_ok = check_user(user, name, password)
 
     if user_ok:
-        pass
+        messages = Message().load_new_messages(cursor, user.id)
+
+        if not messages:
+            print("\nNo new messages!")
+        else:
+            for message in messages:
+                from_user = User().load_user_by_id(cursor, message.from_id)
+                print(f"\nReceived from: {from_user.username}\tOn: {str(message.creation_date)[:19]}"
+                      f"\tMessage: {message.text}")
 
 
 def send_message(cursor, name, password, to_user, message):
@@ -155,6 +164,10 @@ def main():
         elif args.username and args.password and not args.list and args.to \
                 and args.send and not args.new:
             send_message(cursor, args.username, args.password, args.to, args.send)
+
+        elif args.username and args.password and not args.list and not args.to \
+                and not args.send and args.new:
+            list_new_messages(cursor, args.username, args.password)
 
         else:
             parser_.print_help(sys.stderr)  # Print argparse help if non of the options above are chosen.
