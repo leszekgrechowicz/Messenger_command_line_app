@@ -80,8 +80,8 @@ def list_messages(cursor, name, password):
             print("\nNo messages!")
         else:
             for message in messages:
-                from_user = User().load_user_by_id(cursor, message.to_id)
-                print(f"\nSend to: {from_user.username}\tOn: {str(message.creation_date)[:19]}"
+                from_user = User().load_user_by_id(cursor, message.from_id)
+                print(f"\nFrom: {from_user.username}\tOn: {str(message.creation_date)[:19]}"
                       f"\tMessage: {message.text}")
 
 

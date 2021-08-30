@@ -1,6 +1,4 @@
 from crypt_pass import hash_password
-from create_db import create_db
-from psycopg2 import connect
 
 
 class User:
@@ -124,7 +122,7 @@ class Message:
     def load_all_messages(cursor, user_id):
         """Draws all messages from the DataBase"""
 
-        sql = f"SELECT id, from_id, to_id, creation_date, text FROM messages WHERE from_id={user_id};"
+        sql = f"SELECT id, from_id, to_id, creation_date, text FROM messages WHERE to_id={user_id};"
 
         messages = []
         cursor.execute(sql)
