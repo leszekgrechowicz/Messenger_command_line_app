@@ -133,3 +133,19 @@ class Message:
 
             messages.append(loaded_user)
         return messages
+
+    @staticmethod
+    def load_new_messages(cursor, user_id):
+        """Draws all new messages from the DataBase"""
+
+        sql = f"SELECT id, from_id, to_id, creation_date, text FROM messages WHERE to_id={user_id} AND is_read IS FALSE;"
+
+        messages = []
+        cursor.execute(sql)
+        for row in cursor.fetchall():
+            id_, from_id, to_id, creation_date, text = row
+            loaded_user = Message(from_id, to_id, text, creation_date)
+            loaded_user._id = id_
+
+            messages.append(loaded_user)
+        return messages

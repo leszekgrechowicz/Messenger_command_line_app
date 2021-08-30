@@ -46,7 +46,12 @@ def get_args():
 
     parser.add_argument('-l',
                         '--list',
-                        help='List all users messages',
+                        help='List unread users messages',
+                        action='store_true')
+
+    parser.add_argument('-l',
+                        '--list',
+                        help='List unread users messages',
                         action='store_true')
 
     return parser, parser.parse_args()
@@ -77,7 +82,7 @@ def list_messages(cursor, name, password):
         messages = Message().load_all_messages(cursor, user.id)
 
         if not messages:
-            print("\nNo messages!")
+            print("\nNo new messages!")
         else:
             for message in messages:
                 from_user = User().load_user_by_id(cursor, message.from_id)
